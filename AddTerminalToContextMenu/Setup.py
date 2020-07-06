@@ -15,10 +15,12 @@ def setup():
         raise Exception('Windows Terminal configuration file not detected.')
     terminalList = loadJson(config)['profiles']['list']
     terminalList = [i for i in terminalList if not i['hidden']]
-    needAdmin = ask('Do you want to add context menu which can run as administrator?')
-    setupSrcDir(needAdmin)
+    isNeedAdmin = isAdmin()
+    if isNeedAdmin:
+        isNeedAdmin = ask('Do you want to add context menu which can run as administrator?')
+    setupSrcDir(isNeedAdmin)
     info = setSubmenuItems(terminalList)
-    setRegistry(info, needAdmin)
+    setRegistry(info, isNeedAdmin)
 
 def isScriptInstalled():
     try:
@@ -76,11 +78,11 @@ def setRegistry(info, isNeedAdmin):
 
 def setSubmenuItems(terminalList):
     info = []
-    cpath = os.path.split(os.path.realpath(__file__))[0]
+    # cpath = os.path.split(os.path.realpath(__file__))[0]
     # For just excuting script ↑
     # For using pyInstaller package to exe ↓
     # https://www.zhihu.com/question/268105244/answer/771295481
-    # cpath = getattr(sys, '_MEIPASS', os.path.abspath(os.path.dirname(__file__)))
+    cpath = getattr(sys, '_MEIPASS', os.path.abspath(os.path.dirname(__file__)))
     os.system(rf'copy /y {cpath}\src\wt.ico {CACHE}\wt_src\wt.ico')
     def execute(i, path):
         os.system(rf'copy /y {cpath}\{path} {CACHE}\wt_src\{i["guid"]}.ico')
@@ -116,14 +118,18 @@ Else
 End If''')
 
 
-def ask(question):
-    entered = input(f'''
-    {question}
-    Entered 'y' to accept OR 'q' to cancel OR any other key to deny.
-    ''')
-    if entered.lower() == 'y': return True
-    elif entered.lower() == 'q': quit()
-    else: return False
+def ask(question, isChoice = True):
+    A = 'Entered any key to continue or {Ctrl + C} to cancel.'
+    B = 'Entered "y" to accept or any other key to deny.'
+    try:
+        entered = input(f'{question}\n{(A, B)[isChoice]}')
+    except:
+        print('Installation Cancelled.')
+        os.system('pause')
+        quit()
+    if isChoice:
+        if entered.lower() == 'y': return True
+        else: return False
 
 def getProgramFilesPath(includePreview):
     folders = f'{os.environ["ProgramFiles"]}\WindowsApps'
@@ -224,21 +230,25 @@ def isAdmin():
         return ctypes.windll.shell32.IsUserAnAdmin()
     except:
         return False
-        
-if isAdmin():
-    exeDir = f'{os.environ["LOCALAPPDATA"]}\Microsoft\WindowsApps'
-    if 'wt.exe' not in os.listdir(exeDir):
-        raise Exception('Windows Terminal not detected.')
-    if isScriptInstalled():
-        isUninstall = ask('Installation detected. Uninstall it?')
-        if isUninstall:
-            uninstall()
-            print('Uninstall Finished.')
-            os.system('pause')
-    else:
-        setup()
-        print('Setup Finished.')
-        os.system('pause')
-else: # If converted python script into an executable file, use `sys.argv[1:]` in the following line instead of `sys.argv`
-    # May not work if use non-admin account
-    ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, " ".join(sys.argv), None, 1)
+
+exeDir = f'{os.environ["LOCALAPPDATA"]}\Microsoft\WindowsApps'
+if isScriptInstalled():
+    isUninstall = ask('Installation detected. Uninstall it?', False)
+    uninstall()
+    print('Uninstall Finished.')
+    os.system('pause')
+elif 'wt.exe' not in os.listdir(exeDir):
+    raise Exception('Windows Terminal not detected.')
+else:
+    tip = ask(f'''WARNING:
+    You are installing this script for user \'{os.environ["USERNAME"]}\'. 
+    If installing for current user which is inconsistent with the former identity, 
+    maybe you should run this script directly instead of running as administrator.''', False)
+    setup()
+    print('Setup Finished.')
+    os.system('pause')
+# if isAdmin():
+#     pass
+# else:
+#     If converted python script into an executable file, use `sys.argv[1:]` in the following line instead of `sys.argv` May not work if use non-admin account
+#     ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, " ".join(sys.argv[1:]), None, 1)
