@@ -15,6 +15,9 @@
 
 [View Details...](ASSPyTools/README.md#ass-字幕相关的批量处理脚本)
 
+### A tool to stitch images as an irregular image grid
+
+[View Details...](IrregularImageStitcher\README.md#不规则多宫格图片拼接)
 
 # Some code snippets collected from Internet
 

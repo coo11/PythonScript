@@ -78,13 +78,14 @@ def setRegistry(info, isNeedAdmin):
 
 def setSubmenuItems(terminalList):
     info = []
-    # cpath = os.path.split(os.path.realpath(__file__))[0]
+    cpath = os.path.split(os.path.realpath(__file__))[0]
     # For just excuting script ↑
     # For using pyInstaller package to exe ↓
     # https://www.zhihu.com/question/268105244/answer/771295481
-    cpath = getattr(sys, '_MEIPASS', os.path.abspath(os.path.dirname(__file__)))
+    # cpath = getattr(sys, '_MEIPASS', os.path.abspath(os.path.dirname(__file__)))
     os.system(rf'copy /y {cpath}\src\wt.ico {CACHE}\wt_src\wt.ico')
     def execute(i, path):
+        print(rf'copy /y {cpath}\{path} {CACHE}\wt_src\{i["guid"]}.ico')
         os.system(rf'copy /y {cpath}\{path} {CACHE}\wt_src\{i["guid"]}.ico')
         info.append({'name': i['name'], 'guid': i['guid']})
     for i in terminalList:
@@ -96,6 +97,8 @@ def setSubmenuItems(terminalList):
             execute(i, 'src\ps.ico')
         elif 'git' in i['name'].lower():
             execute(i, 'src\git.ico')
+        elif 'node' in i['name'].lower():
+            execute(i, r'src\nodejs.ico')
         elif 'icon' in i and i['icon'].endswith('.ico'):
             execute(i, i['icon'])
     return info
