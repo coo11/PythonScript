@@ -10,13 +10,13 @@
 pip install Pillow
 ```
 
-配置可修改脚本末尾的字典：
+可修改脚本末尾的字典配置各项参数：
 
 ```Python
 config = {
     "spacing": 20,  # 每格图片间距
     "isVertical": True, # 是否垂直排列图片
-    "isRightToLeft": False,  # 竖直排列时有效，决定是否从右到左排列图片
+    "isRightToLeft": False,  # 垂直排列时有效，决定是否从右到左排列图片
     "isZigzag": False,  # 是否按之字形排列图片；否则按一条龙排列
     "keep": "size",  # `size` 保持每张图片大小不变, `height` 或 `width` 则保证按一行（列）中最小高（宽）度为基准缩放尺寸
     "oneline": True,  # 仅当 `keep` 参数为 `size` 时有效，是否仅仅以当前行（列）为基准缩放；否则所有图片按所有图片中最小的边长缩放。
