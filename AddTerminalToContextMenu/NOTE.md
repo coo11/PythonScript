@@ -3,17 +3,25 @@
 ### 打包时添加同目录的其他文件
 1. 在脚本目录执行 `pyi-makespec -F setup.py` 命令生成 spec 文件
 2. 编辑 spec 文件，在 datas 的方括号中填入二维元组，如 `datas = [('src', 'src')]`，表示把当前目录中的 `src` 文件夹打包，执行时再释放到临时文件夹的根目录的 `src` 文件夹中
-3. 执行 `pyinstaller -F setup.spec` 打包
+3. 执行 `pyinstaller -F --upx-exclude=vcruntime140.dll setup.spec` 打包
 
 
 ### 代码中可能需要改动内容
-1. 对于代码中使用的绝对路径 ([Reference](https://www.zhihu.com/question/268105244/answer/771295481))：
+1. 获取脚本或打包后的文件路径 ([Reference](https://stackoverflow.com/a/404750))：
 
     ```Python
-    from os import path
+    import os
     import sys
-    bundle_dir = getattr(sys, '_MEIPASS', path.abspath(path.dirname(__file__)))
-    path_to_dat = path.join(bundle_dir, 'other-file.dat')
+    
+    config_name = 'myapp.cfg'
+    
+    # determine if application is a script file or frozen exe
+    if getattr(sys, 'frozen', False):
+        application_path = os.path.dirname(sys.executable)
+    elif __file__:
+        application_path = os.path.dirname(__file__)
+
+    config_path = os.path.join(application_path, config_name)
     ```
 2. 提升用户权限 ([Reference](https://stackoverflow.com/a/11746382))：
 

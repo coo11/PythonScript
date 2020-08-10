@@ -1,0 +1,53 @@
+subs:
+  # - https://www.proxyprovider.com/clash_subscription_link/xxxxxxxxx
+
+rules:
+  # EHentai
+  - DOMAIN,ehgt.org,DIRECT
+  - DOMAIN-SUFFIX,exhentai.org,DIRECT
+  - DOMAIN-SUFFIX,e-hentai.org,PROXY
+  - DOMAIN-SUFFIX,hath.network,PROXY
+  - DOMAIN-SUFFIX,e-hentaidb.com,PROXY
+  
+  # Yandex
+  - DOMAIN-SUFFIX,ya.ru,PROXY
+  - DOMAIN-SUFFIX,yandex.com,PROXY
+  - DOMAIN-SUFFIX,yandex.net,PROXY
+  - DOMAIN-SUFFIX,yastatic.net,PROXY
+  - DOMAIN-SUFFIX,yandex.ru,PROXY
+  
+  # Booru
+  - DOMAIN-SUFFIX,gelbooru.org,PROXY
+  - DOMAIN-SUFFIX,donmai.us,PROXY
+  - DOMAIN,rule34.xxx,PROXY
+  - DOMAIN-SUFFIX,yande.re,PROXY
+  - DOMAIN-SUFFIX,konachan.com,PROXY
+  - DOMAIN,chan.sankakucomplex.com,PROXY
+  - DOMAIN,cs.sankakucomplex.com,PROXY
+  - DOMAIN-SUFFIX,sankakucomplex.com,DENIED
+  - DOMAIN-SUFFIX,jads.co,DENIED
+  - DOMAIN-SUFFIX,adtrue.com,DENIED
+  
+  # Unclassified 
+  - DOMAIN,safebrowsing.googleapis.com,DENIED
+  - DOMAIN,safebrowsing.urlsec.qq.com,DENIED
+  - DOMAIN-SUFFIX,neverssl.com,DIRECT
+  - DOMAIN-SUFFIX,moegirl.org,PROXY
+  - DOMAIN-SUFFIX,moegirl.org.cn,PROXY
+  - DOMAIN-SUFFIX,inoreader.com,PROXY
+  - DOMAIN,ads-pixiv.net,REJECT
+  - DOMAIN,pixiv.org,PROXY
+  - DOMAIN-SUFFIX,pximg.net,PROXY
+  # - DOMAIN,ping.pe,PROXY
+  - DOMAIN,upload.cc,PROXY
+  - DOMAIN-SUFFIX,south-plus.net,PROXY
+  - DOMAIN-SUFFIX,bgm.tv,PROXY
+  - DOMAIN-SUFFIX,ptt.cc,PROXY
+  - DOMAIN-SUFFIX,textnow.com,PROXY
+  - DOMAIN-SUFFIX,textnow.me,PROXY
+  - DOMAIN-SUFFIX,jsboxbbs.com,PROXY
+  - DOMAIN-SUFFIX,python.org,PROXY
+  - DOMAIN-SUFFIX,readthedocs.io,PROXY
+  - DOMAIN-SUFFIX,stackoverflow.com,PROXY
+  - DOMAIN-SUFFIX,v2ex.com,PROXY
+  - DOMAIN-SUFFIX,dwnews.com,PROXY

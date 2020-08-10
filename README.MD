@@ -20,6 +20,10 @@
 
 [View Details...](IrregularImageStitcher/README.md#不规则多宫格图片拼接)
 
+### A utility to generate Clash Config.yaml
+
+[View Details...](Clash/README.md)
+
 # Some code snippets collected from Internet
 
 ### parse JSON File with commnet
