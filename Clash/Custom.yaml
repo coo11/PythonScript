@@ -1,32 +1,13 @@
 subs:
   # - https://www.proxyprovider.com/clash_subscription_link/xxxxxxxxx
 
-rules:
-  # EHentai
-  - DOMAIN,ehgt.org,DIRECT
-  - DOMAIN-SUFFIX,exhentai.org,DIRECT
-  - DOMAIN-SUFFIX,e-hentai.org,PROXY
-  - DOMAIN-SUFFIX,hath.network,PROXY
-  - DOMAIN-SUFFIX,e-hentaidb.com,PROXY
-  
+rules:  
   # Yandex
   - DOMAIN-SUFFIX,ya.ru,PROXY
   - DOMAIN-SUFFIX,yandex.com,PROXY
   - DOMAIN-SUFFIX,yandex.net,PROXY
   - DOMAIN-SUFFIX,yastatic.net,PROXY
   - DOMAIN-SUFFIX,yandex.ru,PROXY
-  
-  # Booru
-  - DOMAIN-SUFFIX,gelbooru.org,PROXY
-  - DOMAIN-SUFFIX,donmai.us,PROXY
-  - DOMAIN,rule34.xxx,PROXY
-  - DOMAIN-SUFFIX,yande.re,PROXY
-  - DOMAIN-SUFFIX,konachan.com,PROXY
-  - DOMAIN,chan.sankakucomplex.com,PROXY
-  - DOMAIN,cs.sankakucomplex.com,PROXY
-  - DOMAIN-SUFFIX,sankakucomplex.com,DENIED
-  - DOMAIN-SUFFIX,jads.co,DENIED
-  - DOMAIN-SUFFIX,adtrue.com,DENIED
   
   # Unclassified 
   - DOMAIN,safebrowsing.googleapis.com,DENIED

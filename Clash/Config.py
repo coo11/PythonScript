@@ -1,3 +1,4 @@
+
 # -*- coding: utf-8 -*-
 # https://lancellc.gitbook.io/clash/clash-config-file
 
@@ -12,55 +13,75 @@ from os import path
 Profiles_ConnersHua = """
 rule-providers:
 
-  Unbreak:
+  AdBlockWhite:
     type: http
     behavior: classical
-    path: ./RuleSet/Unbreak.yaml
-    url: https://raw.githubusercontent.com/DivineEngine/Profiles/master/Clash/RuleSet/Unbreak.yaml
+    path: ./RuleSet/AdBlockWhite.yaml
+    url: https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@release/rule/Clash/WhiteList/WhiteList.yaml
     interval: 86400
-
+    
   AdBlock:
     type: http
     behavior: classical
     path: ./RuleSet/AdBlock.yaml
-    url: https://raw.githubusercontent.com/DivineEngine/Profiles/master/Clash/RuleSet/Guard/Advertising.yaml
+    url: https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@release/rule/Clash/Advertising/Advertising.yaml
     interval: 86400
 
-  Hijacking:
+  FSMEDIA:
     type: http
     behavior: classical
-    path: ./RuleSet/Hijacking.yaml
-    url: https://raw.githubusercontent.com/DivineEngine/Profiles/master/Clash/RuleSet/Guard/Hijacking.yaml
-    interval: 86400
-
-  Streaming:
-    type: http
-    behavior: classical
-    path: ./RuleSet/Hijacking.yaml
-    url: https://raw.githubusercontent.com/DivineEngine/Profiles/master/Clash/RuleSet/StreamingMedia/Streaming.yaml
+    path: ./RuleSet/FSMEDIA.yaml
+    url: https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@release/rule/Clash/GlobalMedia/GlobalMedia.yaml
     interval: 86400
 
   Global:
     type: http
     behavior: classical
     path: ./RuleSet/Global.yaml
-    url: https://raw.githubusercontent.com/DivineEngine/Profiles/master/Clash/RuleSet/Global.yaml
+    url: https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@release/rule/Clash/Global/Global.yaml
     interval: 86400
-
+    
+  GlobalDomain:
+    type: http
+    behavior: domain
+    path: ./RuleSet/GlobalDomain.yaml
+    url: https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@release/rule/Clash/Proxy/Proxy_Domain.yaml
+    interval: 86400
+    
   China:
     type: http
     behavior: classical
     path: ./RuleSet/China.yaml
-    url: https://raw.githubusercontent.com/DivineEngine/Profiles/master/Clash/RuleSet/China.yaml
+    url: https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@release/rule/Clash/China/China.yaml
     interval: 86400
 
-# ALL POLICY YOU CAN USE: DIRECT, PROXY, DENIED, OSMEDIA, MATCH
+  Telegram:
+    type: http
+    behavior: classical
+    path: ./RuleSet/Telegram.yaml
+    url: https://cdn.jsdelivr.net/gh/lhie1/Rules@master/Clash/Provider/Telegram.yaml
+    interval: 86400
+
+  Blackhole:
+    type: http
+    behavior: ipcidr
+    path: ./RuleSet/Blackhole.yaml
+    url: https://cdn.jsdelivr.net/gh/DivineEngine/Profiles@master/Clash/RuleSet/Extra/IP-Blackhole.yaml
+    interval: 86400
+
+# ALL POLICY YOU CAN USE: DIRECT, PROXY, DENIED, FSMEDIA, MATCH
 rules:
-  - RULE-SET,Unbreak,DIRECT
+  - RULE-SET,AdBlockWhite,NATIVE
   - RULE-SET,AdBlock,DENIED
-  - RULE-SET,Hijacking,DENIED
-  - RULE-SET,Streaming,OSMEDIA
+  - RULE-SET,Telegram,PROXY
+  - RULE-SET,Blackhole,PROXY,no-resolve
+  - RULE-SET,FSMEDIA,FSMEDIA
+  
+  # GeoIP
+  - GEOIP,CN,DIRECT
+  
   - RULE-SET,Global,PROXY
+  - RULE-SET,GlobalDomain,PROXY
 
   - IP-CIDR,192.168.0.0/16,DIRECT
   - IP-CIDR,10.0.0.0/8,DIRECT
@@ -70,13 +91,6 @@ rules:
   - IP-CIDR,224.0.0.0/4,DIRECT
 
   - RULE-SET,China,DIRECT
-  # Tencent
-  - IP-CIDR,119.28.28.28/32,DIRECT
-  - IP-CIDR,182.254.116.0/24,DIRECT
-
-  # GeoIP
-  - GEOIP,CN,DIRECT
-  - GEOIP,TW,PROXY
 
   - MATCH,MATCH
 """
@@ -85,18 +99,20 @@ CPATH = path.dirname(path.abspath(__file__))
 
 
 def set_basic_info(
-    *, port=7890, s5_port=7891, mode="rule", log_lv="info", ext_port=9877
+    *, port=7890, m_port=6789, s5_port=5678, mode="rule", log_lv="info", ext_port=9877
 ):
     return rf"""##############
 # Generated at {strftime("%Y-%m-%d %H:%M:%S")}
 ##############
 # HTTP
 port: {port}
+# HTTP&SOCKS5
+mixed-port: {m_port}
 # SOCKS5
 socks-port: {s5_port}
 # Linux & macOS
 # redir-port: 7892
-allow-lan: true
+allow-lan: false
 # rule / global / direct
 mode: {mode}
 # silent / info / warning / error / debug
@@ -105,22 +121,123 @@ log-level: {log_lv}
 external-controller: '127.0.0.1:{ext_port}'
 # `http://{{external-controller}}/ui`
 external-ui: .\dashboard
+experimental:
+  ignore-resolve-fail: true
+tun:
+  enable: true
+  stack: gvisor # only gvisor
+  dns-hijack:
+    - 198.18.0.2:53 # when `fake-ip-range` is 198.18.0.1/16, should hijack 198.18.0.2:53
+  macOS-auto-route: true # auto set global route for Windows
+  # It is recommended to use `interface-name`
+  macOS-auto-detect-interface: true # auto detect interface, conflict with `interface-name`
 dns:
   enable: true
   ipv6: false
-  listen: 127.0.0.1:53
+  listen: '0.0.0.0:53'
   enhanced-mode: fake-ip
+  # enhanced-mode: redir-host
   default-nameserver:
     - 119.29.29.29
-    - 119.28.28.28
-    - 1.2.4.8
+    - 223.5.5.5
+    - 8.8.8.8
+  fake-ip-range: 198.18.0.1/16
   fake-ip-filter:
+    # 以下域名列表参考自 vernesong/OpenClash 项目，并由 Hackl0us 整理补充
+    # === LAN ===
     - '*.lan'
-    - localhost.ptlogin2.qq.com
+    # === Linksys Wireless Router ===
+    - '*.linksys.com'
+    - '*.linksyssmartwifi.com'
+    # === Apple Software Update Service ===
+    - 'swscan.apple.com'
+    - 'mesu.apple.com'
+    # === Windows 10 Connnect Detection ===
+    - '*.msftconnecttest.com'
+    - '*.msftncsi.com'
+    # === NTP Service ===
+    - 'time.*.com'
+    - 'time.*.gov'
+    - 'time.*.edu.cn'
+    - 'time.*.apple.com'
+
+    - 'time1.*.com'
+    - 'time2.*.com'
+    - 'time3.*.com'
+    - 'time4.*.com'
+    - 'time5.*.com'
+    - 'time6.*.com'
+    - 'time7.*.com'
+
+    - 'ntp.*.com'
+    - 'ntp.*.com'
+    - 'ntp1.*.com'
+    - 'ntp2.*.com'
+    - 'ntp3.*.com'
+    - 'ntp4.*.com'
+    - 'ntp5.*.com'
+    - 'ntp6.*.com'
+    - 'ntp7.*.com'
+
+    - '*.time.edu.cn'
+    - '*.ntp.org.cn'
+    - '+.pool.ntp.org'
+
+    - 'time1.cloud.tencent.com'
+    # === Music Service ===
+    ## NetEase
+    - '+.music.163.com'
+    - '*.126.net'
+    ## Baidu
+    - 'musicapi.taihe.com'
+    - 'music.taihe.com'
+    ## Kugou
+    - 'songsearch.kugou.com'
+    - 'trackercdn.kugou.com'
+    ## Kuwo
+    - '*.kuwo.cn'
+    ## JOOX
+    - 'api-jooxtt.sanook.com'
+    - 'api.joox.com'
+    - 'joox.com'
+    ## QQ
+    - '+.y.qq.com'
+    - '+.music.tc.qq.com'
+    - 'aqqmusic.tc.qq.com'
+    - '+.stream.qqmusic.qq.com'
+    ## Xiami
+    - '*.xiami.com'
+    ## Migu
+    - '+.music.migu.cn'
+    # === Game Service ===
+    ## Nintendo Switch
+    - '+.srv.nintendo.net'
+    ## Sony PlayStation
+    - '+.stun.playstation.net'
+    ## Microsoft Xbox
+    - 'xbox.*.microsoft.com'
+    - '+.xboxlive.com'
+    # === Other ===
+    ## QQ Quick Login
+    - 'localhost.ptlogin2.qq.com'
+    ## Golang
+    - 'proxy.golang.org'
+    ## STUN Server
+    - 'stun.*.*'
+    - 'stun.*.*.*'
   nameserver:
-    - https://dns.alidns.com/dns-query
+    - tls://dns.rubyfish.cn:853
+    - https://doh.pub/dns-query
+    - tls://dns.pub
+  fallback:
+    - https://dns.google/dns-query
+    - tcp://1.1.1.1
     - https://1.1.1.1/dns-query
-    - tls://dns.adguard.com:853
+  fallback-filter:
+    geoip: true
+clash-for-android: 
+  # append-system-dns: true # append system DNS to nameserver 
+  ui-subtitle-pattern: "[\u4e00-\u9fa5]{2,4}"
 """
 
 
@@ -173,8 +290,8 @@ def get_sub_list(*sub_url):
 def make_proxy_group(subs):
     # if not subs:
     #     raise Exception('No subscription data avaliable.')
-    region = ["HK", "TW", "JP", "US", "EA", "XX"]
-    regex = ["深港|香港", "台湾|彰化", "日本", "美国", "韩国|新加坡"]
+    region = ["JP", "HK", "TW", "US", "EA", "XX"]
+    regex = ["日本", "深港|香港", "台湾|彰化", "美国", "韩国|新加坡"]
     group = [{"name": i, "type": "select", "proxies": []} for i in region]
     regex = [re.compile(i, re.I | re.A) for i in regex]
     # WARNING: If not use re.A, some CJK unicodes may be lost.
@@ -185,25 +302,27 @@ def make_proxy_group(subs):
                 break
         else:
             group[5]["proxies"].append(i['name'])
-    group[0]["type"] = "url-test"
-    group[0]["interval"] = 86400
-    group[0]["url"] = "http://www.gstatic.com/generate_204"
+    group[0]["type"] = "fallback"
+    group[0]["interval"] = 300
+    group[0]["url"] = "http://connectivitycheck.gstatic.com/generate_204"
     group += [
+        {"name": 'HKA', "type": "url-test", "interval": 7200, "tolerance": 20,
+            "url": "http://youtube.com/generate_204", "proxies": group[1]['proxies']},
         {"name": "PROXY", "type": "select",
-            "proxies": region + ["DIRECT"]},
+            "proxies": ['HKA']+region + ["DIRECT"]},
         {
             "name": "NATIVE",
             "type": "select",
-            "proxies": ["DIRECT", "HK", "TW", "JP"],
+            "proxies": ["DIRECT", "HKA", "HK", "TW", "JP"],
         },
         # {"name": "CNMEDIA", "type": "select", "proxies": ["DIRECT", "HK", "TW"]},
         {
-            "name": "OSMEDIA",
+            "name": "FSMEDIA",
             "type": "select",
-            "proxies": ["HK", "TW", "JP", "US", "PROXY"],
+            "proxies": ["HKA", "HK", "TW", "JP", "US", "PROXY"],
         },
         {"name": "MATCH", "type": "select",
-            "proxies": ["DIRECT", "PROXY"]},
+            "proxies": ["PROXY","DIRECT"]},
         {"name": "DENIED", "type": "select",
             "proxies": ["REJECT", "NATIVE"]},
     ]
@@ -267,34 +386,6 @@ def safe_get(dic, key, ret=[]):
         return ret
     else:
         return val
-
-# def parse_url(list):
-#     new_list = []
-#     for i in list:
-#         if i.startswith("ssr://"):
-#             pass
-#         elif i.startswith("ss://"):
-#             pass
-#         elif i.startswith("vemss://"):
-#             pass
-#         elif i.startswith("trojan://"):
-#             pass
-#         else:
-#             continue
-#     if len(new_list):
-#         return new_list
-#     else:
-#         raise Exception("No Source Found")
-
-# def parse_ss(string):
-#     ss = {"type": "ss"}
-#     info = decode_b64(string)
-#     pos = info.rfind("#")
-#     if pos > 0:
-#         info = info[:pos]
-#         ss["name"] = info[pos + 1:]
-#     info["cipher"], info["password"], info["post"], info["server"] = info.split(
-#         ":")
 
 
 def main():

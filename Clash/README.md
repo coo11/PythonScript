@@ -27,4 +27,4 @@ python Config.py --help
 - WARNING: Because of RULE-SET contained, you need to use Clash Premium.
 
 ### TODO
-- [ ] Auto convert non-clash subscription link in Python
+  [ ] Auto convert non-clash subscription link in Python
