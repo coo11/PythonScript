@@ -18,7 +18,7 @@
 
 ### A tool to stitch images as an irregular image grid
 
-[View Details...](IrregularImageStitcher/README.md#不规则多宫格图片拼接)
+[View Details...](iSplicing/README.md#不规则多宫格图片拼接)
 
 ### A utility to generate Clash Config.yaml
 

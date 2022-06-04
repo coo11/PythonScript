@@ -1,4 +1,3 @@
-
 # -*- coding: utf-8 -*-
 # https://lancellc.gitbook.io/clash/clash-config-file
 
@@ -7,142 +6,162 @@ import yaml
 import requests
 import base64
 import argparse
+import sys
 from time import strftime
 from os import path
 
 Profiles_ConnersHua = """
 rule-providers:
-
-  AdBlockWhite:
-    type: http
-    behavior: classical
-    path: ./RuleSet/AdBlockWhite.yaml
-    url: https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@release/rule/Clash/WhiteList/WhiteList.yaml
-    interval: 86400
     
   AdBlock:
     type: http
     behavior: classical
     path: ./RuleSet/AdBlock.yaml
-    url: https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@release/rule/Clash/Advertising/Advertising.yaml
+    url: https://gh.coo11.workers.dev/raw.githubusercontent.com/blackmatrix7/ios_rule_script/release/rule/Clash/Advertising/Advertising_Classical.yaml
     interval: 86400
 
   FSMEDIA:
     type: http
     behavior: classical
     path: ./RuleSet/FSMEDIA.yaml
-    url: https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@release/rule/Clash/GlobalMedia/GlobalMedia.yaml
+    url: https://gh.coo11.workers.dev/raw.githubusercontent.com/blackmatrix7/ios_rule_script/release/rule/Clash/GlobalMedia/GlobalMedia.yaml
     interval: 86400
 
   Global:
     type: http
     behavior: classical
     path: ./RuleSet/Global.yaml
-    url: https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@release/rule/Clash/Global/Global.yaml
-    interval: 86400
-    
-  GlobalDomain:
-    type: http
-    behavior: domain
-    path: ./RuleSet/GlobalDomain.yaml
-    url: https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@release/rule/Clash/Proxy/Proxy_Domain.yaml
+    url: https://gh.coo11.workers.dev/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Global/Global_Classical.yaml
     interval: 86400
     
   China:
     type: http
     behavior: classical
     path: ./RuleSet/China.yaml
-    url: https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@release/rule/Clash/China/China.yaml
+    url: https://gh.coo11.workers.dev/raw.githubusercontent.com/blackmatrix7/ios_rule_script/release/rule/Clash/China/China.yaml
     interval: 86400
 
   Telegram:
     type: http
     behavior: classical
     path: ./RuleSet/Telegram.yaml
-    url: https://cdn.jsdelivr.net/gh/lhie1/Rules@master/Clash/Provider/Telegram.yaml
+    url: https://gh.coo11.workers.dev/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Telegram/Telegram.yaml
     interval: 86400
-
-  Blackhole:
+    
+  Microsoft:
     type: http
-    behavior: ipcidr
-    path: ./RuleSet/Blackhole.yaml
-    url: https://cdn.jsdelivr.net/gh/DivineEngine/Profiles@master/Clash/RuleSet/Extra/IP-Blackhole.yaml
+    behavior: classical
+    path: ./RuleSet/Microsoft.yaml
+    url: https://gh.coo11.workers.dev/raw.githubusercontent.com/blackmatrix7/ios_rule_script/release/rule/Clash/Microsoft/Microsoft.yaml
+    interval: 86400
+    
+  Steam:
+    type: http
+    behavior: classical
+    path: ./RuleSet/Steam.yaml
+    url: https://gh.coo11.workers.dev/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Steam/Steam.yaml
     interval: 86400
 
 # ALL POLICY YOU CAN USE: DIRECT, PROXY, DENIED, FSMEDIA, MATCH
 rules:
-  - RULE-SET,AdBlockWhite,NATIVE
   - RULE-SET,AdBlock,DENIED
   - RULE-SET,Telegram,PROXY
-  - RULE-SET,Blackhole,PROXY,no-resolve
+  - RULE-SET,Microsoft,PROXY
+  - RULE-SET,Steam,STEAM
   - RULE-SET,FSMEDIA,FSMEDIA
   
   # GeoIP
-  - GEOIP,CN,DIRECT
+  - GEOIP,CN,DIRECT,no-resolve
   
   - RULE-SET,Global,PROXY
-  - RULE-SET,GlobalDomain,PROXY
 
-  - IP-CIDR,192.168.0.0/16,DIRECT
-  - IP-CIDR,10.0.0.0/8,DIRECT
-  - IP-CIDR,172.16.0.0/12,DIRECT
-  - IP-CIDR,127.0.0.0/8,DIRECT
-  - IP-CIDR,100.64.0.0/10,DIRECT
-  - IP-CIDR,224.0.0.0/4,DIRECT
+  # https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Lan/Lan.yaml
+  - DOMAIN,router.asus.com,DIRECT
+  - DOMAIN-SUFFIX,acl4.ssr,DIRECT
+  - DOMAIN-SUFFIX,hiwifi.com,DIRECT
+  - DOMAIN-SUFFIX,home.arpa,DIRECT
+  - DOMAIN-SUFFIX,leike.cc,DIRECT
+  - DOMAIN-SUFFIX,localhost.ptlogin2.qq.com,DIRECT
+  - DOMAIN-SUFFIX,localhost.sec.qq.com,DIRECT
+  - DOMAIN-SUFFIX,miwifi.com,DIRECT
+  - DOMAIN-SUFFIX,msftconnecttest.com,DIRECT
+  - DOMAIN-SUFFIX,msftncsi.com,DIRECT
+  - DOMAIN-SUFFIX,my.router,DIRECT
+  - DOMAIN-SUFFIX,p.to,DIRECT
+  - DOMAIN-SUFFIX,peiluyou.com,DIRECT
+  - DOMAIN-SUFFIX,phicomm.me,DIRECT
+  - DOMAIN-SUFFIX,routerlogin.com,DIRECT
+  - DOMAIN-SUFFIX,tendawifi.com,DIRECT
+  - DOMAIN-SUFFIX,zte.home,DIRECT
+  - IP-CIDR,0.0.0.0/8,DIRECT,no-resolve
+  - IP-CIDR,10.0.0.0/8,DIRECT,no-resolve
+  - IP-CIDR,100.64.0.0/10,DIRECT,no-resolve
+  - IP-CIDR,127.0.0.0/8,DIRECT,no-resolve
+  - IP-CIDR,169.254.0.0/16,DIRECT,no-resolve
+  - IP-CIDR,172.16.0.0/12,DIRECT,no-resolve
+  - IP-CIDR,192.0.0.0/24,DIRECT,no-resolve
+  - IP-CIDR,192.0.2.0/24,DIRECT,no-resolve
+  - IP-CIDR,192.168.0.0/16,DIRECT,no-resolve
+  - IP-CIDR,192.88.99.0/24,DIRECT,no-resolve
+  - IP-CIDR,198.18.0.0/15,DIRECT,no-resolve
+  - IP-CIDR,198.51.100.0/24,DIRECT,no-resolve
+  - IP-CIDR,203.0.113.0/24,DIRECT,no-resolve
+  - IP-CIDR,224.0.0.0/3,DIRECT,no-resolve
+  - IP-CIDR6,::1/128,DIRECT,no-resolve
+  - IP-CIDR6,fc00::/7,DIRECT,no-resolve
+  - IP-CIDR6,fe80::/10,DIRECT,no-resolve
 
   - RULE-SET,China,DIRECT
 
   - MATCH,MATCH
 """
 
-CPATH = path.dirname(path.abspath(__file__))
+if getattr(sys, 'frozen', False):
+    # https://stackoverflow.com/a/404750/14168341
+    CPATH = path.dirname(sys.executable)
+else:
+    CPATH = path.dirname(path.abspath(__file__))
 
 
 def set_basic_info(
-    *, port=7890, m_port=6789, s5_port=5678, mode="rule", log_lv="info", ext_port=9877
+    *, port=7890, m_port=6789, s5_port=5678, log_lv="info", ext_port=9090
 ):
     return rf"""##############
 # Generated at {strftime("%Y-%m-%d %H:%M:%S")}
 ##############
-# HTTP
 port: {port}
-# HTTP&SOCKS5
 mixed-port: {m_port}
-# SOCKS5
 socks-port: {s5_port}
-# Linux & macOS
 # redir-port: 7892
 allow-lan: false
-# rule / global / direct
-mode: {mode}
-# silent / info / warning / error / debug
-log-level: {log_lv}
-# RESTful API
+mode: rule # rule / global / direct
+log-level: {log_lv} # silent / info / warning / error / debug
 external-controller: '127.0.0.1:{ext_port}'
-# `http://{{external-controller}}/ui`
-external-ui: .\dashboard
+external-ui: ./dashboard # `http://{{external-controller}}/ui`
 experimental:
   ignore-resolve-fail: true
-tun:
-  enable: true
-  stack: gvisor # only gvisor
-  dns-hijack:
-    - 198.18.0.2:53 # when `fake-ip-range` is 198.18.0.1/16, should hijack 198.18.0.2:53
-  macOS-auto-route: true # auto set global route for Windows
-  # It is recommended to use `interface-name`
-  macOS-auto-detect-interface: true # auto detect interface, conflict with `interface-name`
 dns:
   enable: true
   ipv6: false
   listen: '0.0.0.0:53'
-  enhanced-mode: fake-ip
-  # enhanced-mode: redir-host
-  default-nameserver:
-    - 119.29.29.29
-    - 223.5.5.5
-    - 8.8.8.8
+  enhanced-mode: fake-ip # redir-host
+  default-nameserver: # https://blog.skk.moe/post/which-public-dns-to-use/#公共-DNS-最佳实践
+    - 119.28.28.28
+    - 223.6.6.6
+  nameserver-policy:
+    'pic.ihcloud.net': '223.6.6.6'
+  nameserver: # https://blog.skk.moe/post/alternate-surge-koolclash-as-gateway/#Clash-DNS Paragraph 2
+    - https://doh.pub/dns-query
+    - https://dns.alidns.com/dns-query
+  fallback:
+    - https://1.1.1.1/dns-query
+    - 208.67.222.222 # OpenDNS
+    - https://dns.google/dns-query
+  fallback-filter:
+    geoip: true
+    geoip-code: CN
   fake-ip-range: 198.18.0.1/16
-  fake-ip-filter:
+  fake-ip-filter: # 2022-1-8 更新
     # 以下域名列表参考自 vernesong/OpenClash 项目，并由 Hackl0us 整理补充
     # === LAN ===
     - '*.lan'
@@ -160,7 +179,6 @@ dns:
     - 'time.*.gov'
     - 'time.*.edu.cn'
     - 'time.*.apple.com'
-
     - 'time1.*.com'
     - 'time2.*.com'
     - 'time3.*.com'
@@ -168,7 +186,6 @@ dns:
     - 'time5.*.com'
     - 'time6.*.com'
     - 'time7.*.com'
-
     - 'ntp.*.com'
     - 'ntp.*.com'
     - 'ntp1.*.com'
@@ -178,11 +195,9 @@ dns:
     - 'ntp5.*.com'
     - 'ntp6.*.com'
     - 'ntp7.*.com'
-
     - '*.time.edu.cn'
     - '*.ntp.org.cn'
     - '+.pool.ntp.org'
-
     - 'time1.cloud.tencent.com'
     # === Music Service ===
     ## NetEase
@@ -225,19 +240,8 @@ dns:
     ## STUN Server
     - 'stun.*.*'
     - 'stun.*.*.*'
-  nameserver:
-    - tls://dns.rubyfish.cn:853
-    - https://doh.pub/dns-query
-    - tls://dns.pub
-  fallback:
-    - https://dns.google/dns-query
-    - tcp://1.1.1.1
-    - https://1.1.1.1/dns-query
-  fallback-filter:
-    geoip: true
-clash-for-android: 
-  # append-system-dns: true # append system DNS to nameserver 
-  ui-subtitle-pattern: "[\u4e00-\u9fa5]{2,4}"
+    ## Bilibili CDN
+    - '*.mcdn.bilivideo.cn'
 """
 
 
@@ -263,11 +267,21 @@ def deduplicate_list(*nodes):
 
 def get_sub_list(*sub_url):
     subs = []
+    requests.adapters.DEFAULT_RETRIES = 5
+    # In case ProxyError: https://stackoverflow.com/a/28521696/14168341
+    session = requests.Session()
+    session.trust_env = False
     for i in sub_url:
-        r = requests.get(i)
+        try:
+            r = requests.get(i)
+        except requests.exceptions.ProxyError as e:
+            print(e)
+            print(f'\nTry using session to bypass proxy...')
+            r = session.get(i)
         sub = ""
         try:
             sub = decode_b64(r.text)
+            print(sub)
         except:
             sub = parse_yaml(r.text)
         else:
@@ -291,7 +305,7 @@ def make_proxy_group(subs):
     # if not subs:
     #     raise Exception('No subscription data avaliable.')
     region = ["JP", "HK", "TW", "US", "EA", "XX"]
-    regex = ["日本", "深港|香港", "台湾|彰化", "美国", "韩国|新加坡"]
+    regex = ["日本", "深港|香港", "台湾|彰化", "美国", "韩国|新加坡|狮城"]
     group = [{"name": i, "type": "select", "proxies": []} for i in region]
     regex = [re.compile(i, re.I | re.A) for i in regex]
     # WARNING: If not use re.A, some CJK unicodes may be lost.
@@ -305,24 +319,37 @@ def make_proxy_group(subs):
     group[0]["type"] = "fallback"
     group[0]["interval"] = 300
     group[0]["url"] = "http://connectivitycheck.gstatic.com/generate_204"
+    # If array proxies' length is 0, Clash crash
+    group = [g for g in group if len(g['proxies']) > 0]
+    region = [g['name'] for g in group]
     group += [
-        {"name": 'HKA', "type": "url-test", "interval": 7200, "tolerance": 20,
-            "url": "http://youtube.com/generate_204", "proxies": group[1]['proxies']},
+        {"name": 'ALL', "type": "url-test", "interval": 7200, "tolerance": 20,
+            "url": "http://youtube.com/generate_204", "proxies": [i['name'] for i in subs]},
         {"name": "PROXY", "type": "select",
-            "proxies": ['HKA']+region + ["DIRECT"]},
+            "proxies": ['ALL'] + region + ["DIRECT"]},
         {
             "name": "NATIVE",
             "type": "select",
-            "proxies": ["DIRECT", "HKA", "HK", "TW", "JP"],
+            "proxies": ["DIRECT", "ALL"] + list(set(["HK", "TW", "JP"]) & set(region)),
         },
         # {"name": "CNMEDIA", "type": "select", "proxies": ["DIRECT", "HK", "TW"]},
         {
             "name": "FSMEDIA",
             "type": "select",
-            "proxies": ["HKA", "HK", "TW", "JP", "US", "PROXY"],
+            "proxies": ["ALL"] + list(set(["HK", "TW", "JP", "US"]) & set(region)) + ["PROXY"],
+        },
+        {
+            "name": "TIKTOK",
+            "type": "select",
+            "proxies": list(set(["JP", "US"]) & set(region)) + ["PROXY"],
+        },
+        {
+            "name": "STEAM",
+            "type": "select",
+            "proxies": ["PROXY", "DIRECT"] + list(set(["XX", "HK", "TW", "JP", "US"]) & set(region)),
         },
         {"name": "MATCH", "type": "select",
-            "proxies": ["PROXY","DIRECT"]},
+            "proxies": ["PROXY", "DIRECT"]},
         {"name": "DENIED", "type": "select",
             "proxies": ["REJECT", "NATIVE"]},
     ]

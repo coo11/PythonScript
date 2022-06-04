@@ -14,7 +14,8 @@ def setup():
     if not os.path.exists(config):
         raise Exception('Windows Terminal configuration file not detected.')
     terminalList = loadJson(config)['profiles']['list']
-    terminalList = [i for i in terminalList if not i['hidden']]
+    # terminalList = [i for i in terminalList if not i["hidden"] or not 'hidden' in i]
+    terminalList = [i for i in terminalList if not 'hidden' in i or not i["hidden"]]
     isNeedAdmin = isAdmin()
     if isNeedAdmin:
         isNeedAdmin = ask('Do you want to add context menu which can run as administrator?')
@@ -64,11 +65,11 @@ def setRegistry(info, isNeedAdmin):
         SetValueEx(key,'Extended', 0, REG_SZ, '')
         SetValueEx(key,'Position', 0, REG_SZ, 'Bottom')
     for i in info:
-        with CreateKey(HKEY_CURRENT_USER, f'{TREE}\ContextMenus\WTerminal\shell\{i["guid"]}') as key:
+        with CreateKey(HKEY_CURRENT_USER, f'{TREE}\ContextMenus\WTerminal\shell\{i["name"]}') as key:
             # Show little shield ↓
             if isNeedAdmin: SetValueEx(key,'HasLUAShield', 0, REG_SZ, '')
             SetValueEx(key,'MUIVerb', 0, REG_SZ, i['name'])
-            SetValueEx(key,'Icon', 0, REG_SZ, rf'{CACHE}\wt_src\{i["guid"]}.ico')
+            SetValueEx(key,'Icon', 0, REG_SZ, rf'{CACHE}\wt_src\{i["name"]}.ico')
             with CreateKey(key, 'command') as cmd:
                 if isNeedAdmin:
                     value = rf'wscript.exe "{CACHE}\helper.vbs" "{os.environ["LOCALAPPDATA"]}\Microsoft\WindowsApps\wt.exe" "%V." "{i["name"]}"'
@@ -83,11 +84,12 @@ def setSubmenuItems(terminalList):
     # For using pyInstaller package to exe ↓
     # https://www.zhihu.com/question/268105244/answer/771295481
     # cpath = getattr(sys, '_MEIPASS', os.path.abspath(os.path.dirname(__file__)))
-    os.system(rf'copy /y {cpath}\src\wt.ico {CACHE}\wt_src\wt.ico')
+    os.system(rf'copy /y "{cpath}\src\wt.ico" "{CACHE}\wt_src\wt.ico"')
     def execute(i, path):
-        print(rf'copy /y {cpath}\{path} {CACHE}\wt_src\{i["guid"]}.ico')
-        os.system(rf'copy /y {cpath}\{path} {CACHE}\wt_src\{i["guid"]}.ico')
-        info.append({'name': i['name'], 'guid': i['guid']})
+        print(i)
+        print(rf'copy /y "{cpath}\{path}" "{CACHE}\wt_src\{i["name"]}.ico"')
+        os.system(rf'copy /y "{cpath}\{path}" "{CACHE}\wt_src\{i["name"]}.ico"')
+        info.append({'name': i['name']})
     for i in terminalList:
         if 'python' in i['name'].lower():
             execute(i, 'src\py.ico')
