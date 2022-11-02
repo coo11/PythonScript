@@ -65,9 +65,9 @@ class iJoiner:
                                             Image.Resampling.LANCZOS)
                 new_canvas.paste(im, (cX, cY))
                 if is_horizontal:
-                    cX += sum(new_side[:(i + 1)]) + sp * (i + 1)
+                    cX += w + sp * (i + 1)
                 else:
-                    cY += sum(new_side[:(i + 1)]) + sp * (i + 1)
+                    cY += h + sp * (i + 1)
             mid_product[out] = new_canvas
 
         self.canvas = mid_product['OUTPUT']
@@ -149,6 +149,8 @@ class iSplicing(iJoiner):
                 self.rows = 1
         elif not self.validate_row_col(rows=rows, columns=columns):
             self.ask_row_col()
+        else:
+            self.calc_layout()
 
         self.force_waterfall = force_waterfall
         self.vertical_align = vertical_align
@@ -416,7 +418,7 @@ class iSplicing(iJoiner):
 if __name__ == "__main__":
     if True:
         iSplicing(**{
-            'is_vertical': True,
+            'is_vertical': False,
             'keep': "height",  # size, width, height
             'is_zigzag': False,
             'is_rtl': False,
@@ -424,7 +426,7 @@ if __name__ == "__main__":
             'force_waterfall': False,
             "vertical_align": "top",  # top, center, bottom
             "horizontal_align": "left",  # left, center, right
-            "spacing": 10,
+            "spacing": 0,
             "background_color": "#EF5FA7",  # "#C0C0C0",
         }).render().save()
     else:

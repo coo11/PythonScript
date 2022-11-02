@@ -1,4 +1,4 @@
 *.dev/
 .DS_Store
 *.exe
-__pycache__
+**/__pycache__

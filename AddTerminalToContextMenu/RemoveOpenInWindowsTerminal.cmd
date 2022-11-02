@@ -70,9 +70,3 @@ echo.
 echo.
 pause>nul
 exit
-
-
-
-
-
-
